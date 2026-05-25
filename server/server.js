@@ -10,9 +10,21 @@ connectDB();
 
 const app = express();
 
-// CORS
+const allowedOrigins = [
+  'http://localhost:5173', 
+  'http://localhost:3000', 
+  'https://vishwa-construction.vercel.app'
+];
+if (process.env.CLIENT_URL) allowedOrigins.push(process.env.CLIENT_URL);
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : ['http://localhost:5173', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

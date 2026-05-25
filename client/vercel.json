@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://vishwa-construction.onrender.com/api/:path*"
-    },
-    {
       "source": "/((?!api|assets|icons|logo.png|manifest.json|sw.js|favicon.svg|registerSW.js|workbox-.*).*)",
       "destination": "/index.html"
     }
