@@ -30,13 +30,15 @@ app.use('/api/dashboard', require('./routes/dashboard'));
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'OK', message: 'Vishwa Construction API is running' }));
 
-// Serve React build in production
+// Serve React build in production (Uncomment if hosting frontend and backend together)
+/*
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/dist')));
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
   });
 }
+*/
 
 // Global error handler
 app.use(errorHandler);
