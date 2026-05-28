@@ -32,7 +32,7 @@ export default function InvoicePreview({ invoice, contractor }) {
           <img
             src={contractor.logo}
             alt="Company Logo"
-            style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain', margin: '0 auto 8px auto', display: 'block' }}
+            style={{ height: '150px', objectFit: 'contain', margin: '0 auto 10px auto', display: 'block' }}
           />
         )}
         <div style={{ fontSize: '18pt', fontWeight: 'bold', letterSpacing: '1px', marginBottom: '2px' }}>
@@ -214,25 +214,25 @@ export default function InvoicePreview({ invoice, contractor }) {
 
       {/* Signature */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '50px' }}>
-        <div style={{ textAlign: 'center', minWidth: '200px' }}>
+        <div style={{ textAlign: 'center' }}>
           {contractor.signature && (
             <div style={{
               marginBottom: '6px',
               border: '1px solid #000',
-              padding: '8px',
+              padding: '10px 16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              minHeight: '80px'
+              minHeight: '70px'
             }}>
               <img
                 src={contractor.signature}
                 alt="Signature"
-                style={{ maxHeight: '70px', maxWidth: '180px', objectFit: 'contain' }}
+                style={{ height: '60px', objectFit: 'contain' }}
               />
             </div>
           )}
-          <div>({contractor.contractorName || 'Rashminkumar R Patel'})</div>
+          <div style={{ whiteSpace: 'nowrap' }}>({contractor.contractorName || 'Rashminkumar R Patel'})</div>
           <div>(Authorized signatory)</div>
         </div>
       </div>
