@@ -29,13 +29,11 @@ export default function InvoicePreview({ invoice, contractor }) {
       {/* Header */}
       <div style={{ textAlign: 'center', marginBottom: '4px' }}>
         {contractor.logo && (
-          <div style={{ marginBottom: '8px' }}>
-            <img
-              src={contractor.logo}
-              alt="Company Logo"
-              style={{ height: '60px', objectFit: 'contain', margin: '0 auto', display: 'block' }}
-            />
-          </div>
+          <img
+            src={contractor.logo}
+            alt="Company Logo"
+            style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain', margin: '0 auto 8px auto', display: 'block' }}
+          />
         )}
         <div style={{ fontSize: '18pt', fontWeight: 'bold', letterSpacing: '1px', marginBottom: '2px' }}>
           {contractor.companyName || 'VISHWA CONSTRUCTION'}
@@ -216,13 +214,21 @@ export default function InvoicePreview({ invoice, contractor }) {
 
       {/* Signature */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '50px' }}>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', minWidth: '200px' }}>
           {contractor.signature && (
-            <div style={{ marginBottom: '4px' }}>
+            <div style={{
+              marginBottom: '6px',
+              border: '1px solid #000',
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '80px'
+            }}>
               <img
                 src={contractor.signature}
                 alt="Signature"
-                style={{ height: '50px', objectFit: 'contain' }}
+                style={{ maxHeight: '70px', maxWidth: '180px', objectFit: 'contain' }}
               />
             </div>
           )}
