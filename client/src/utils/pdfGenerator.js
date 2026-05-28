@@ -58,12 +58,58 @@ export async function printInvoice(elementId) {
   setTimeout(() => { win.print(); }, 500);
 }
 
-export function shareOnWhatsApp(invoiceData) {
-  const text = encodeURIComponent(
-    `*${invoiceData.companyName}*\n` +
-    `Invoice #${invoiceData.billNumber} for ${invoiceData.customerName}\n` +
-    `Amount: ₹${invoiceData.grandTotal?.toLocaleString('en-IN') || invoiceData.totalAmount?.toLocaleString('en-IN')}\n` +
-    `Date: ${new Date(invoiceData.date).toLocaleDateString('en-IN')}`
-  );
-  window.open(`https://wa.me/?text=${text}`, '_blank');
+export async function shareInvoicePDF(elementId, invoiceData) {
+  const element = document.getElementById(elementId);
+  if (!element) throw new Error('Invoice element not found');
+
+  // Generate the PDF as a blob
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    windowWidth: element.scrollWidth,
+    windowHeight: element.scrollHeight
+  });
+
+  const imgData = canvas.toDataURL('image/png');
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
+  const imgWidth = canvas.width;
+  const imgHeight = canvas.height;
+  const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+  const imgX = (pdfWidth - imgWidth * ratio) / 2;
+
+  pdf.addImage(imgData, 'PNG', imgX, 0, imgWidth * ratio, imgHeight * ratio);
+
+  const filename = `Invoice-${invoiceData.customerName}-Bill${invoiceData.billNumber}.pdf`;
+  const pdfBlob = pdf.output('blob');
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Use Web Share API to share the PDF file (works on mobile browsers → WhatsApp, etc.)
+  if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+    try {
+      await navigator.share({
+        title: `Invoice #${invoiceData.billNumber}`,
+        text: `${invoiceData.companyName || 'Vishwa Construction'} - Invoice #${invoiceData.billNumber} for ${invoiceData.customerName} - ₹${(invoiceData.grandTotal || invoiceData.totalAmount || 0).toLocaleString('en-IN')}`,
+        files: [pdfFile]
+      });
+      return { success: true };
+    } catch (err) {
+      // User cancelled the share dialog
+      if (err.name === 'AbortError') return { success: false, cancelled: true };
+      throw err;
+    }
+  } else {
+    // Fallback: download the PDF directly (desktop browsers without Web Share)
+    pdf.save(filename);
+    return { success: true, fallback: true };
+  }
 }

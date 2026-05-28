@@ -7,7 +7,7 @@ import { invoiceService } from '../services/invoiceService';
 import { useAuth } from '../context/AuthContext';
 import { formatDate } from '../utils/dateFormatter';
 import { formatCurrency } from '../utils/amountToWords';
-import { generatePDF, printInvoice, shareOnWhatsApp } from '../utils/pdfGenerator';
+import { generatePDF, printInvoice, shareInvoicePDF } from '../utils/pdfGenerator';
 import toast from 'react-hot-toast';
 
 export default function InvoiceDetail() {
@@ -17,6 +17,7 @@ export default function InvoiceDetail() {
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generatingPDF, setGeneratingPDF] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   useEffect(() => {
     invoiceService.getById(id)
@@ -107,11 +108,23 @@ export default function InvoiceDetail() {
             Print
           </button>
 
-          <button onClick={() => shareOnWhatsApp({ ...invoice, companyName: user?.companyName })} className="btn-success text-sm py-2">
+          <button
+            onClick={async () => {
+              setSharing(true);
+              try {
+                const result = await shareInvoicePDF('invoice-preview', { ...invoice, companyName: user?.companyName });
+                if (result.fallback) toast.success('PDF downloaded! Share it manually on WhatsApp.');
+                else if (result.success) toast.success('Invoice shared!');
+              } catch { toast.error('Failed to share PDF'); }
+              finally { setSharing(false); }
+            }}
+            disabled={sharing}
+            className="btn-success text-sm py-2"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
             </svg>
-            WhatsApp
+            {sharing ? 'Preparing...' : 'Share PDF'}
           </button>
 
           <button onClick={handleDuplicate} className="btn-secondary text-sm py-2">Duplicate</button>
