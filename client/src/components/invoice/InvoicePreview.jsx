@@ -32,7 +32,7 @@ export default function InvoicePreview({ invoice, contractor }) {
           <img
             src={contractor.logo}
             alt="Company Logo"
-            style={{ height: '150px', objectFit: 'contain', margin: '0 auto 10px auto', display: 'block' }}
+            style={{ height: '200px', objectFit: 'contain', margin: '0 auto 2px auto', display: 'block' }}
           />
         )}
         <div style={{ fontSize: '18pt', fontWeight: 'bold', letterSpacing: '1px', marginBottom: '2px' }}>
